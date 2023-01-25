@@ -4,6 +4,7 @@
  *
  */
 const getTask = async (context, callSid) => {
+  console.log("Executing getTask");
   const client = context.getTwilioClient();
   const task = await client.taskrouter
     .workspaces(context.WORKSPACE_SID)
@@ -20,12 +21,13 @@ const getTask = async (context, callSid) => {
  *
  */
 const getTaskQueueStats = async (context, taskQueueSid) => {
+  console.log("Executing getTaskQueueStats");
   const client = context.getTwilioClient();
   const taskQueueStats = await client.taskrouter
     .workspaces(context.WORKSPACE_SID)
     .taskQueues(taskQueueSid)
     .cumulativeStatistics({
-      Minutes: 5, // Cumulative statistics for the past 5 minutes
+      Minutes: context.CUMULATIVE_STAT_DURATION_MINUTES, // Determines the time duration for which the cumulative stats are fetched. It is set as an environment variable
     })
     .fetch();
   return taskQueueStats;
@@ -37,6 +39,7 @@ const getTaskQueueStats = async (context, taskQueueSid) => {
  *
  */
 const getAverageWaitTime = (t) => {
+  console.log("Executing getAverageWaitTime");
   const moment = require("moment");
   const durationInSeconds = moment.duration(t.avg, "seconds");
   return {
@@ -53,6 +56,7 @@ const getAverageWaitTime = (t) => {
  *
  */
 const getTaskPosition = async (context, taskSid, taskQueueSid) => {
+  console.log("Executing getTaskPosition");
   const client = context.getTwilioClient();
   const taskList = await client.taskrouter
     .workspaces(context.WORKSPACE_SID)
@@ -78,6 +82,7 @@ const createCallbackTask = async (
   workflowSid,
   taskQueueSid
 ) => {
+  console.log("Executing createCallbackTask");
   let callbackTaskAttributes = {
     taskType: "callback",
     to: caller,
